@@ -1,0 +1,31 @@
+<Application x:Class="NewKlear.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:vm="clr-namespace:NewKlear.App.ViewModels"
+             xmlns:views="clr-namespace:NewKlear.App.Views"
+             xmlns:svc="clr-namespace:NewKlear.App.Services"
+             ShutdownMode="OnMainWindowClose">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemesDictionary Theme="Dark" />
+                <ui:ControlsDictionary />
+                <ResourceDictionary Source="Themes/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <svc:InverseBoolConverter x:Key="InverseBool" />
+            <svc:InverseBoolToVisibilityConverter x:Key="InverseBoolToVis" />
+            <svc:HasValueToVisibilityConverter x:Key="HasValueToVis" />
+            <svc:EqualsToBoolConverter x:Key="EqualsToBool" />
+
+            <DataTemplate DataType="{x:Type vm:DashboardViewModel}"><views:DashboardView /></DataTemplate>
+            <DataTemplate DataType="{x:Type vm:CleanViewModel}"><views:CleanView /></DataTemplate>
+            <DataTemplate DataType="{x:Type vm:BloatwareViewModel}"><views:BloatwareView /></DataTemplate>
+            <DataTemplate DataType="{x:Type vm:StartupViewModel}"><views:StartupView /></DataTemplate>
+            <DataTemplate DataType="{x:Type vm:OptimizeViewModel}"><views:OptimizeView /></DataTemplate>
+            <DataTemplate DataType="{x:Type vm:HistoryViewModel}"><views:HistoryView /></DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><views:SettingsView /></DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

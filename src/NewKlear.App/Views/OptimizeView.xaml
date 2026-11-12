@@ -1,0 +1,152 @@
+<UserControl x:Class="NewKlear.App.Views.OptimizeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             x:Name="Root">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="36,48,36,32">
+            <!-- Header -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="Optimize" Style="{StaticResource Nk.PageTitle}" />
+                    <TextBlock Style="{StaticResource Nk.PageSubtitle}">
+                        <Run Text="Proven Windows 11 settings for speed and privacy. Every change is backed up and can be switched back off." />
+                        <Run Text="{Binding AppliedCount, Mode=OneWay}" Foreground="{DynamicResource Nk.Accent}" FontWeight="SemiBold" /><Run Text=" of " Foreground="{DynamicResource Nk.Accent}" /><Run Text="{Binding TotalCount, Mode=OneWay}" Foreground="{DynamicResource Nk.Accent}" FontWeight="SemiBold" /><Run Text=" applied." Foreground="{DynamicResource Nk.Accent}" />
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                    <Button Style="{StaticResource Nk.SecondaryButton}" Command="{Binding CreateRestorePointCommand}" IsEnabled="{Binding IsAdmin}">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="ShieldCheckmark24" FontSize="16" Margin="0,0,8,0" />
+                            <TextBlock Text="Create restore point" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource Nk.PrimaryButton}" Margin="10,0,0,0" Command="{Binding ApplyRecommendedCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Flash24" FontSize="16" Margin="0,0,8,0" />
+                            <TextBlock Text="Apply recommended" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- Pending effects banner -->
+            <Border Style="{StaticResource Nk.Card}" Margin="0,18,0,0" Padding="16,12" Background="{DynamicResource Nk.WarningSoft}" BorderBrush="{DynamicResource Nk.Warning}"
+                    Visibility="{Binding PendingText, Converter={StaticResource HasValueToVis}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ui:SymbolIcon Symbol="Info24" FontSize="18" Foreground="{DynamicResource Nk.Warning}" />
+                    <TextBlock Grid.Column="1" Text="{Binding PendingText}" Margin="10,0" VerticalAlignment="Center" Foreground="{DynamicResource Nk.Text}" />
+                    <Button Grid.Column="2" Style="{StaticResource Nk.SecondaryButton}" Content="Restart Explorer" Padding="12,5" MinHeight="30"
+                            Command="{Binding RestartExplorerCommand}" Visibility="{Binding NeedsExplorerRestart, Converter={StaticResource BoolToVis}}" />
+                </Grid>
+            </Border>
+
+            <!-- Power plan -->
+            <Border Style="{StaticResource Nk.Card}" Margin="0,18,0,0">
+                <StackPanel>
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Power24" FontSize="20" Foreground="{DynamicResource Nk.Accent}" />
+                            <TextBlock Text="Power plan" Style="{StaticResource Nk.SectionTitle}" Margin="10,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource Nk.Muted}">
+                            <Run Text="Active: " /><Run Text="{Binding ActivePlanName, Mode=OneWay}" FontWeight="SemiBold" Foreground="{DynamicResource Nk.Text}" />
+                        </TextBlock>
+                    </Grid>
+                    <ItemsControl ItemsSource="{Binding PowerPlans}" Margin="-6,14,-6,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><UniformGrid Columns="3" /></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Margin="6" Command="{Binding DataContext.SetPowerPlanCommand, ElementName=Root}" CommandParameter="{Binding}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource Nk.CardButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource Nk.Accent}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <Grid>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" Style="{StaticResource Nk.ItemTitle}" />
+                                            <TextBlock Text="{Binding Description}" Style="{StaticResource Nk.Muted}" Margin="0,4,0,0" />
+                                        </StackPanel>
+                                        <ui:SymbolIcon Symbol="CheckmarkCircle24" Filled="True" FontSize="20" Foreground="{DynamicResource Nk.Accent}"
+                                                       HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="{Binding IsActive, Converter={StaticResource BoolToVis}}" />
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- Category chips -->
+            <StackPanel Orientation="Horizontal" Margin="0,22,0,12">
+                <RadioButton Style="{StaticResource Nk.Chip}" GroupName="tweakCat" IsChecked="{Binding Category, Converter={StaticResource EqualsToBool}, ConverterParameter=Performance}">
+                    <StackPanel Orientation="Horizontal"><ui:SymbolIcon Symbol="TopSpeed24" FontSize="15" Margin="0,0,6,0" /><TextBlock Text="Performance" /></StackPanel>
+                </RadioButton>
+                <RadioButton Style="{StaticResource Nk.Chip}" GroupName="tweakCat" IsChecked="{Binding Category, Converter={StaticResource EqualsToBool}, ConverterParameter=Privacy}">
+                    <StackPanel Orientation="Horizontal"><ui:SymbolIcon Symbol="EyeOff24" FontSize="15" Margin="0,0,6,0" /><TextBlock Text="Privacy &amp; AI" /></StackPanel>
+                </RadioButton>
+                <RadioButton Style="{StaticResource Nk.Chip}" GroupName="tweakCat" IsChecked="{Binding Category, Converter={StaticResource EqualsToBool}, ConverterParameter=Explorer}">
+                    <StackPanel Orientation="Horizontal"><ui:SymbolIcon Symbol="Folder24" FontSize="15" Margin="0,0,6,0" /><TextBlock Text="Explorer &amp; taskbar" /></StackPanel>
+                </RadioButton>
+                <RadioButton Style="{StaticResource Nk.Chip}" GroupName="tweakCat" IsChecked="{Binding Category, Converter={StaticResource EqualsToBool}, ConverterParameter=Services}">
+                    <StackPanel Orientation="Horizontal"><ui:SymbolIcon Symbol="Server24" FontSize="15" Margin="0,0,6,0" /><TextBlock Text="Services" /></StackPanel>
+                </RadioButton>
+            </StackPanel>
+
+            <!-- Tweaks -->
+            <Border Style="{StaticResource Nk.Card}" Padding="8">
+                <ItemsControl ItemsSource="{Binding Tweaks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{StaticResource Nk.Row}" Margin="0,1" Padding="14,12">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Margin="0,0,20,0">
+                                        <WrapPanel>
+                                            <TextBlock Text="{Binding Name}" Style="{StaticResource Nk.ItemTitle}" Margin="0,0,8,0" />
+                                            <Border Style="{StaticResource Nk.Pill}" Background="{DynamicResource Nk.WarningSoft}" Margin="0,0,6,0"
+                                                    Visibility="{Binding IsCaution, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="Caution" Style="{StaticResource Nk.PillText}" Foreground="{DynamicResource Nk.Warning}" />
+                                            </Border>
+                                            <Border Style="{StaticResource Nk.Pill}" Margin="0,0,6,0" Visibility="{Binding EffectText, Converter={StaticResource HasValueToVis}}">
+                                                <TextBlock Text="{Binding EffectText}" Style="{StaticResource Nk.PillText}" />
+                                            </Border>
+                                            <Border Style="{StaticResource Nk.Pill}" Visibility="{Binding CanChange, Converter={StaticResource InverseBoolToVis}}">
+                                                <TextBlock Text="Needs admin" Style="{StaticResource Nk.PillText}" />
+                                            </Border>
+                                        </WrapPanel>
+                                        <TextBlock Text="{Binding Description}" Style="{StaticResource Nk.Muted}" Margin="0,4,0,0" />
+                                    </StackPanel>
+                                    <Grid Grid.Column="1" VerticalAlignment="Center">
+                                        <ui:ProgressRing IsIndeterminate="True" Width="18" Height="18" HorizontalAlignment="Left" Margin="-28,0,0,0"
+                                                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" />
+                                        <ui:ToggleSwitch IsChecked="{Binding IsOn}" IsEnabled="{Binding CanChange}" />
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

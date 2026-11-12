@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>NewKlear</AssemblyName>
+    <RootNamespace>NewKlear.App</RootNamespace>
+    <ApplicationIcon>Assets\newklear.ico</ApplicationIcon>
+    <Product>NewKlear</Product>
+    <Description>NewKlear — Clean, Optimize, Boost for Windows 11</Description>
+    <Version>1.0.0</Version>
+    <Copyright>NewKlear</Copyright>
+  </PropertyGroup>
+
+  <!-- Release builds require administrator. Pass -p:NkAsInvoker=true for an unelevated dev/test build. -->
+  <PropertyGroup Condition="'$(NkAsInvoker)' != 'true'">
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <!-- Single self-contained exe on publish -->
+  <PropertyGroup>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NewKlear.Core\NewKlear.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="WPF-UI" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\*.png" />
+    <Resource Include="Assets\newklear.ico" />
+  </ItemGroup>
+
+</Project>

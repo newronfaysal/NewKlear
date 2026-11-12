@@ -1,0 +1,161 @@
+<UserControl x:Class="NewKlear.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="36,48,36,36" MaxWidth="1180">
+            <TextBlock Text="{Binding Greeting}" Style="{StaticResource Nk.Overline}" FontSize="13" />
+            <TextBlock Text="Your PC at a glance" Style="{StaticResource Nk.PageTitle}" Margin="0,2,0,22" />
+
+            <!-- ===== Hero ===== -->
+            <Grid>
+                <Border Style="{StaticResource Nk.Card}" Padding="0" ClipToBounds="True">
+                    <Grid>
+                        <Border Background="{DynamicResource Nk.HeroGlow}" CornerRadius="14" />
+                        <Grid Margin="28,26">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <Border Style="{StaticResource Nk.Pill}" Background="{DynamicResource Nk.AccentSoft}" HorizontalAlignment="Left">
+                                    <TextBlock Text="SMART SCAN" Style="{StaticResource Nk.PillText}" Foreground="{DynamicResource Nk.Accent}" />
+                                </Border>
+                                <TextBlock Text="{Binding HeroTitle}" FontFamily="{StaticResource Nk.DisplayFont}" FontSize="34" FontWeight="Bold"
+                                           Foreground="{DynamicResource Nk.Text}" Margin="0,12,0,6" TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding HeroSubtitle}" Style="{StaticResource Nk.PageSubtitle}" MaxWidth="560" HorizontalAlignment="Left" />
+                                <ProgressBar Style="{StaticResource Nk.Progress}" Margin="0,18,0,0" MaxWidth="520" HorizontalAlignment="Stretch"
+                                             Value="{Binding Clean.Progress}" Visibility="{Binding Clean.IsScanning, Converter={StaticResource BoolToVis}}" />
+                                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                                    <Button Style="{StaticResource Nk.PrimaryButton}" Command="{Binding QuickScanCommand}" IsEnabled="{Binding Clean.IsBusy, Converter={StaticResource InverseBool}}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <ui:SymbolIcon Symbol="Search24" FontSize="16" Margin="0,0,8,0" />
+                                            <TextBlock Text="Quick Scan" />
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Style="{StaticResource Nk.SecondaryButton}" Margin="10,0,0,0" Command="{Binding GoCommand}" CommandParameter="clean">
+                                        <StackPanel Orientation="Horizontal">
+                                            <ui:SymbolIcon Symbol="Broom24" FontSize="16" Margin="0,0,8,0" />
+                                            <TextBlock Text="Review &amp; clean" />
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- Disk ring -->
+                            <Grid Grid.Column="1" Width="170" Height="170" Margin="24,0,8,0" VerticalAlignment="Center">
+                                <Ellipse Stroke="{DynamicResource Nk.Surface2}" StrokeThickness="12" Margin="6" />
+                                <ui:ProgressRing IsIndeterminate="False" Progress="{Binding SystemDrivePercent}" Width="170" Height="170"
+                                                 Foreground="{DynamicResource Nk.Accent}" CoverRingVisibility="Collapsed" />
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock HorizontalAlignment="Center" FontFamily="{StaticResource Nk.DisplayFont}" FontSize="32" FontWeight="Bold" Foreground="{DynamicResource Nk.Text}">
+                                        <Run Text="{Binding SystemDrivePercent, Mode=OneWay}" /><Run Text="%" FontSize="18" />
+                                    </TextBlock>
+                                    <TextBlock Text="system drive used" HorizontalAlignment="Center" Style="{StaticResource Nk.Muted}" FontSize="11.5" />
+                                    <TextBlock Text="{Binding SystemDriveFree}" HorizontalAlignment="Center" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource Nk.Accent}" Margin="0,4,0,0" />
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- ===== Live stats ===== -->
+            <UniformGrid Columns="4" Margin="-6,18,-6,0">
+                <Border Style="{StaticResource Nk.Card}" Margin="6">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="DeveloperBoard24" FontSize="18" Foreground="{DynamicResource Nk.Accent}" />
+                            <TextBlock Text="Processor" Style="{StaticResource Nk.Overline}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource Nk.BigNumber}" Margin="0,10,0,8"><Run Text="{Binding CpuPercent, Mode=OneWay}" /><Run Text="%" FontSize="16" /></TextBlock>
+                        <ProgressBar Style="{StaticResource Nk.Progress}" Value="{Binding CpuPercent, Mode=OneWay}" />
+                        <TextBlock Text="{Binding CpuName}" Style="{StaticResource Nk.Muted}" FontSize="11.5" Margin="0,8,0,0" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Nk.Card}" Margin="6">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="DataUsage24" FontSize="18" Foreground="{DynamicResource Nk.Accent}" />
+                            <TextBlock Text="Memory" Style="{StaticResource Nk.Overline}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource Nk.BigNumber}" Margin="0,10,0,8"><Run Text="{Binding MemoryPercent, Mode=OneWay}" /><Run Text="%" FontSize="16" /></TextBlock>
+                        <ProgressBar Style="{StaticResource Nk.Progress}" Value="{Binding MemoryPercent, Mode=OneWay}" />
+                        <TextBlock Text="{Binding MemoryText}" Style="{StaticResource Nk.Muted}" FontSize="11.5" Margin="0,8,0,0" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Nk.Card}" Margin="6">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Storage24" FontSize="18" Foreground="{DynamicResource Nk.Accent}" />
+                            <TextBlock Text="System drive" Style="{StaticResource Nk.Overline}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding SystemDriveFree}" Style="{StaticResource Nk.BigNumber}" Margin="0,10,0,8" />
+                        <ProgressBar Style="{StaticResource Nk.Progress}" Value="{Binding SystemDrivePercent, Mode=OneWay}" />
+                        <TextBlock Text="{Binding SystemDriveText}" Style="{StaticResource Nk.Muted}" FontSize="11.5" Margin="0,8,0,0" />
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource Nk.Card}" Margin="6">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Timer24" FontSize="18" Foreground="{DynamicResource Nk.Accent}" />
+                            <TextBlock Text="Uptime" Style="{StaticResource Nk.Overline}" Margin="8,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding UptimeText}" Style="{StaticResource Nk.BigNumber}" Margin="0,10,0,8" />
+                        <ProgressBar Style="{StaticResource Nk.Progress}" Value="0" Opacity="0.4" />
+                        <TextBlock Text="Restart weekly to keep things fresh" Style="{StaticResource Nk.Muted}" FontSize="11.5" Margin="0,8,0,0" />
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+
+            <!-- ===== Quick actions ===== -->
+            <TextBlock Text="Quick actions" Style="{StaticResource Nk.SectionTitle}" Margin="0,26,0,10" />
+            <UniformGrid Columns="4" Margin="-6,0">
+                <Button Style="{StaticResource Nk.CardButton}" Margin="6" Command="{Binding GoCommand}" CommandParameter="clean">
+                    <StackPanel>
+                        <Border Style="{StaticResource Nk.IconTile}" HorizontalAlignment="Left"><ui:SymbolIcon Symbol="Broom24" FontSize="20" Foreground="{DynamicResource Nk.Accent}" /></Border>
+                        <TextBlock Text="Clean junk" Style="{StaticResource Nk.ItemTitle}" Margin="0,14,0,4" />
+                        <TextBlock Text="{Binding LastCleanText}" Style="{StaticResource Nk.Muted}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource Nk.CardButton}" Margin="6" Command="{Binding GoCommand}" CommandParameter="bloat">
+                    <StackPanel>
+                        <Border Style="{StaticResource Nk.IconTile}" HorizontalAlignment="Left"><ui:SymbolIcon Symbol="AppsList24" FontSize="20" Foreground="{DynamicResource Nk.Accent}" /></Border>
+                        <TextBlock Text="Remove bloatware" Style="{StaticResource Nk.ItemTitle}" Margin="0,14,0,4" />
+                        <TextBlock Text="Preinstalled apps, Copilot and promos" Style="{StaticResource Nk.Muted}" />
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource Nk.CardButton}" Margin="6" Command="{Binding GoCommand}" CommandParameter="startup">
+                    <StackPanel>
+                        <Border Style="{StaticResource Nk.IconTile}" HorizontalAlignment="Left"><ui:SymbolIcon Symbol="Rocket24" FontSize="20" Foreground="{DynamicResource Nk.Accent}" /></Border>
+                        <TextBlock Text="Startup apps" Style="{StaticResource Nk.ItemTitle}" Margin="0,14,0,4" />
+                        <TextBlock Style="{StaticResource Nk.Muted}"><Run Text="{Binding StartupEnabledCount, Mode=OneWay}" /><Run Text=" apps start with Windows" /></TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource Nk.CardButton}" Margin="6" Command="{Binding GoCommand}" CommandParameter="optimize">
+                    <StackPanel>
+                        <Border Style="{StaticResource Nk.IconTile}" HorizontalAlignment="Left"><ui:SymbolIcon Symbol="TopSpeed24" FontSize="20" Foreground="{DynamicResource Nk.Accent}" /></Border>
+                        <TextBlock Text="Optimize Windows" Style="{StaticResource Nk.ItemTitle}" Margin="0,14,0,4" />
+                        <TextBlock Text="{Binding TweaksAppliedText}" Style="{StaticResource Nk.Muted}" />
+                    </StackPanel>
+                </Button>
+            </UniformGrid>
+
+            <!-- ===== Footer facts ===== -->
+            <Border Style="{StaticResource Nk.Card}" Margin="0,18,0,0" Padding="20,14">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ui:SymbolIcon Symbol="Sparkle24" FontSize="20" Foreground="{DynamicResource Nk.Accent}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Margin="12,0" VerticalAlignment="Center" Foreground="{DynamicResource Nk.Text}" FontSize="13.5">
+                        <Run Text="NewKlear has freed" /><Run Text=" " /><Run Text="{Binding TotalCleanedText, Mode=OneWay}" FontWeight="Bold" Foreground="{DynamicResource Nk.Accent}" /><Run Text=" on this PC so far." />
+                    </TextBlock>
+                    <TextBlock Grid.Column="2" Text="{Binding OsName}" Style="{StaticResource Nk.Muted}" VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
